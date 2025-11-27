@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>3D Jewelry Box – A-Frame</title>
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="src/styles/main.css" />
+
+    <!-- ECS components -->
+    <script src="src/js/components/ring-state-system.js"></script>
+    <script src="src/js/components/ring-selectable.js"></script>
+    <script src="src/js/components/drag-rotate-y.js"></script>
+    <script src="src/js/components/jewelry-box-toggle.js"></script>
+
+    <!-- App bootstrap -->
+    <script src="src/js/main.js" defer></script>
+  </head>
+
+  <body>
+    <!-- UI -->
+    <button id="closeButton">Close</button>
+    <div id="label">
+      Click the box to open it. Then click a ring to zoom in and drag to rotate.
+    </div>
+
+    <!-- Attribution (CC-BY requirement) -->
+    <div id="attribution">
+      3D models licensed under CC-BY:<br />
+      Three Diamond Ring by Jarlan Perez [CC-BY] via Poly Pizza
+    </div>
+
+    <!-- 3D Scene -->
+    <a-scene 
+      renderer="colorManagement: true; physicallyCorrectLights: true"
+      device-orientation-permission-ui="enabled: true"
+    >
+
+      <!-- Camera with tilt/gyro + mouse raycaster -->
+      <a-entity 
+        position="0 1.0 1.8" 
+        rotation="-25 0 0"
+        camera
+        look-controls="magicWindowTrackingEnabled: true; pointerLockEnabled: false;"
+      >
+        <a-camera
+          cursor="rayOrigin: mouse; fuse: false"
+          raycaster="objects: .clickable; far: 10"
+        ></a-camera>
+      </a-entity>
+
+      <!-- 3D TITLE TEXT -->
+      <a-entity 
+        text="value: Jewelry Box; align: center; color: #ffffff; width: 4;"
+        position="0 2 -0.5">
+      </a-entity>
+
+      <!-- Floor -->
+      <a-plane
+        position="0 0 -1"
+        rotation="-90 0 0"
+        width="8"
+        height="8"
+        material="color: #111118; metalness: 0.1; roughness: 0.5"
+      ></a-plane>
+
+      <!-- Jewelry box (clickable, closed -> open) -->
+      <a-entity
+        id="jewelry-box"
+        position="0 0.85 -0.5"
+        jewelry-box-toggle
+      >
+        <!-- Outer base -->
+        <a-box
+          depth="1.6"
+          width="1.6"
+          height="0.4"
+          material="color: #f2f2f2; metalness: 0.1; roughness: 0.7"
+        ></a-box>
+
+        <!-- Mid zipper band -->
+        <a-box
+          depth="1.62"
+          width="1.62"
+          height="0.05"
+          position="0 0.2 0"
+          material="color: #e0e0e0; metalness: 0.2; roughness: 0.6"
+        ></a-box>
+
+        <!-- Inner tray cushion -->
+        <a-box
+          depth="1.45"
+          width="1.45"
+          height="0.2"
+          position="0 0.22 0"
+          material="color: #f9f6f3; metalness: 0.05; roughness: 0.9"
+        ></a-box>
+
+        <!-- Simple grid (left/right) -->
+        <a-box
+          depth="1.45"
+          width="0.03"
+          height="0.16"
+          position="-0.24 0.24 0"
+          material="color: #e6e0d8; metalness: 0.05; roughness: 0.85"
+        ></a-box>
+        <a-box
+          depth="1.45"
+          width="0.03"
+          height="0.16"
+          position="0.24 0.24 0"
+          material="color: #e6e0d8; metalness: 0.05; roughness: 0.85"
+        ></a-box>
+
+        <!-- Invisible clickable surface on top of box -->
+        <a-box
+          class="clickable"
+          width="1.8"
+          depth="1.8"
+          height="0.02"
+          position="0 0.32 0"
+          material="opacity: 0; transparent: true"
+        ></a-box>
+
+        <!-- Lid entity (animated open/close) -->
+        <a-entity data-lid="true" position="0 0.38 0">
+          <a-box
+            depth="1.6"
+            width="1.6"
+            height="0.32"
+            material="color: #f2f2f2; metalness: 0.1; roughness: 0.7"
+          ></a-box>
+
+          <!-- Lid padding -->
+          <a-box
+            depth="1.35"
+            width="1.35"
+            height="0.15"
+            position="0 0.12 0.1"
+            material="color: #f9f6f3; metalness: 0.05; roughness: 0.9"
+          ></a-box>
+
+          <!-- Small pocket -->
+          <a-box
+            depth="0.01"
+            width="0.7"
+            height="0.18"
+            position="0 0.12 0.3"
+            material="color: #e9e0d7; metalness: 0.03; roughness: 0.9"
+          ></a-box>
+        </a-entity>
+
+        <!-- ========== RINGS (UNCHANGED) ========== -->
+
+        <!-- Ring 1 -->
+        <a-entity
+          id="ring1"
+          class="clickable"
+          gltf-model="url(ring1.glb)"
+          position="-0.45 0.32 0.50"
+          scale="0.10 0.10 0.10"
+          rotation="0 0 0"
+          ring-selectable="openOffset: 0.46 0.5 0.5; openScale: 0.10 0.10 0.10"
+          drag-rotate-y
+          animation__spin="property: rotation; to: 0 360 0; dur: 2500; loop: true; autoplay: true;"
+        ></a-entity>
+
+        <!-- Ring 2 -->
+        <a-entity
+          id="ring"
+          class="clickable"
+          gltf-model="url(ring.glb)"
+          position="0 0.37 0.50"
+          scale="0.08 0.08 0.07"
+          rotation="0 0 0"
+          ring-selectable="openOffset: 0.06 0.5 0.3; openScale: 0.15 0.15 0.13"
+          drag-rotate-y
+          animation__spin="property: rotation; to: 0 360 0; dur: 2500; loop: true; autoplay: true;"
+        ></a-entity>
+
+        <!-- Ring 3 -->
+        <a-entity
+          id="ring3"
+          class="clickable"
+          gltf-model="url(ring3.glb)"
+          position="0.45 0.42 0.50"
+          scale="0.50 0.50 0.50"
+          rotation="0 90 0"
+          ring-selectable="openOffset: -0.45 0.5 0.5; openScale: 0.45 0.45 0.45"
+          drag-rotate-y
+          animation__spin="property: rotation; to: 0 360 0; dur: 2500; loop: true; autoplay: true;"
+        ></a-entity>
+
+      </a-entity>
+
+      <!-- Lights -->
+      <a-entity light="type: ambient; intensity: 0.45; color: #ffffff"></a-entity>
+
+      <a-entity
+        light="type: directional; intensity: 0.9; castShadow: true"
+        position="2 4 2"
+      ></a-entity>
+
+      <a-entity
+        light="type: point; intensity: 0.8; distance: 10"
+        position="-2 3 -1"
+      ></a-entity>
+
+      <a-entity
+        light="type: spot; intensity: 0.7; angle: 30; penumbra: 0.3"
+        position="0 3 -0.5"
+        rotation="-45 0 0"
+      ></a-entity>
+
+    </a-scene>
+  </body>
+</html>
